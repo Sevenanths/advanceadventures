@@ -32,7 +32,13 @@ var Level = Class.create({
 
 			for(var x = 0; x < width; x++)
 			{
-				this.map[y][x] = (Math.random() > 0.9) ? 1 : 0;
+				if(y == 15)
+					this.map[y][x] = 1;
+				else
+					this.map[y][x] = 0;
+
+				if(y > 15)
+					this.map[y][x] = (Math.random() > 0.9) ? 1 : 0;
 			}
 		}
 	},
@@ -46,6 +52,29 @@ var Level = Class.create({
 	{
 		this.camX -= ((this.camX + this.player.x - 400) * this.cameraDelay);
 		this.camY -= ((this.camY + this.player.y - 300) * this.cameraDelay);
+	},
+
+	getAABBs: function(aabb)
+	{
+		list = [];
+
+		var x0 = aabb.x0 >> 4;
+		var y0 = aabb.y0 >> 4;
+		var x1 = (aabb.x1 >> 4) + 1;
+		var y1 = (aabb.y1 >> 4) + 1;
+
+		for(var x = x0; x <= x1; x++)
+		{
+			for(var y = y0; y <= y1; y++)
+			{
+				if(this.map[y][x] == 0)
+					continue;
+
+				list.push(new AABB(x << 4, y << 4, (x << 4) + 16, (y << 4) + 16));
+			}
+		}
+
+		return list;
 	},
 
 	draw: function(target, offX, offY)

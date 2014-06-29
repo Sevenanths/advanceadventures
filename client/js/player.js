@@ -23,12 +23,31 @@ var Player = Class.create({
 
 		this.x = 0;
 		this.y = 0;
+		this.xd = 0;
+		this.yd = 0;
+		this.onGround = false;
+		this.aabb = new AABB(this.x, this.y, this.x + 16, this.y + 16);
 	},
 
 	tick: function()
 	{
-		this.x++;
-		this.y = 50 + Math.sin(this.x / 100) * 50;
+		if(!this.onGround)
+			this.yd += 1.5;
+
+		this.xd *= 0.8;
+		this.yd *= 0.8;
+
+		var AABBs = this.currentLevel.getAABBs(this.aabb);
+		for(var i = 0, l = AABBs.length; i < l; i++)
+		{
+			var aabb = AABBs[i];
+			this.xd = aabb.xCollide(this.aabb, this.xd);
+			this.yd = aabb.yCollide(this.aabb, this.yd);
+		}
+
+		this.aabb.move(this.xd, this.yd);
+		this.x = this.aabb.x0;
+		this.y = this.aabb.y0;
 	},
 
 	draw: function(target, offX, offY)
