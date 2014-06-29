@@ -19,11 +19,14 @@
 var Level = Class.create({
 	initialize: function(width, height)
 	{
+		this.width = width;
+		this.height = height;
+
 		this.camX = 0;
 		this.camY = 0;
 		this.cameraDelay = 0.2;
-		this.width = width;
-		this.height = height;
+		
+		this.remotePlayers = {};
 
 		this.map = [];
 		for(var y = 0; y < height; y++)

@@ -48,6 +48,66 @@ var Player = Class.create({
 		this.xd *= 0.8;
 		this.yd *= 0.8;
 
+		if(Math.abs(this.xd) < 0.01) this.xd = 0;
+		if(Math.abs(this.yd) < 0.01) this.yd = 0;
+
+		var xOrg = this.xd;
+		var yOrg = this.yd;
+
+		// Collision
+		var AABBs = this.currentLevel.getAABBs(this.aabb);
+		for(var i = 0, l = AABBs.length; i < l; i++)
+		{
+			var aabb = AABBs[i];
+			this.xd = aabb.xCollide(this.aabb, this.xd);
+			this.yd = aabb.yCollide(this.aabb, this.yd);
+		}
+
+		this.aabb.move(this.xd, this.yd);
+		this.x = this.aabb.x0;
+		this.y = this.aabb.y0;
+
+		if(this.xd != 0 || this.yd != 0)
+		{
+			socket.emit("move", { xd: this.xd, yd: this.yd, x: this.x, y: this.y });
+		}
+
+		// Checks
+		this.onGround = (yOrg != this.yd && yOrg > 0);
+		if(this.xd != xOrg) this.xd = 0;
+		if(this.yd != yOrg) this.yd = 0;
+
+		// Outside the level?
+		var maxX = this.currentLevel.width << 4;
+		var maxY = this.currentLevel.height << 4;
+
+		if(this.x < 0) this.x = 0;
+		if(this.y < 0) this.y = 0;
+		if(this.x > maxX) this.x = maxX;
+		if(this.y > maxY) this.y = maxY;
+	},
+
+	draw: function(target, offX, offY)
+	{
+		target.drawImage(getAsset("player"), (offX + this.x) | 0, (offY + this.y) | 0);
+	}
+});
+
+var RemotePlayer = Class.create({
+	initialize: function(level)
+	{
+		this.currentLevel = level;
+
+		this.x = 0;
+		this.y = 0;
+		this.xd = 0;
+		this.yd = 0;
+		this.onGround = false;
+		this.aabb = new AABB(this.x, this.y, this.x + 16, this.y + 16);
+	},
+
+	tick: function()
+	{
 		var xOrg = this.xd;
 		var yOrg = this.yd;
 
@@ -68,15 +128,6 @@ var Player = Class.create({
 		this.onGround = (yOrg != this.yd && yOrg > 0);
 		if(this.xd != xOrg) this.xd = 0;
 		if(this.yd != yOrg) this.yd = 0;
-
-		// Outside the level?
-		var maxX = this.currentLevel.width << 4;
-		var maxY = this.currentLevel.height << 4;
-
-		if(this.x < 0) this.x = 0;
-		if(this.y < 0) this.y = 0;
-		if(this.x > maxX) this.x = maxX;
-		if(this.y > maxY) this.y = maxY;
 	},
 
 	draw: function(target, offX, offY)

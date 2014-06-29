@@ -36,6 +36,14 @@ var Game = Class.create({
 	draw: function()
 	{
 		this.level.draw(this.context, this.level.camX, this.level.camY);
+		
+		var remotePlayers = this.level.remotePlayers;
+		for(var key in remotePlayers)
+		{
+			var player = remotePlayers[key];
+			player.draw(this.context, this.level.camX, this.level.camY);
+		}
+
 		this.player.draw(this.context, this.level.camX, this.level.camY);
 	}
 });
@@ -44,6 +52,7 @@ var Game = Class.create({
  * Some variables
 **/
 var game;
+var socket;
 
 /**
  * This method defines the game loop
@@ -74,10 +83,59 @@ function init()
 	var canvas = document.getElementById("game");
 	var context = canvas.getContext("2d");
 
-	game = new Game(canvas, context);
-	
-	// Run game loop
-	gameLoop();
+	socket = io("ws://localhost:3000");
+	socket.on("connect", function()
+	{
+		// Handlers
+		socket.on("joined", function(data)
+		{
+			// Create game instance
+			game = new Game(canvas, context);
+
+			var player = game.player;
+
+			player.id = data.id;
+			player.x = data.x;
+			player.y = data.y
+
+			// Run game loop
+			gameLoop();
+		});
+
+		socket.on("join", function(data)
+		{
+			var id = data.id;
+			if(id == game.player.id)
+				return;
+
+			var name = data.name;
+			var x = data.x;
+			var y = data.y;
+
+			game.level.remotePlayers[id] = new RemotePlayer(id, name, x, y);
+		});
+
+		socket.on("move", function(data)
+		{
+			console.log("move");
+			var id = data.id;
+			if(id == game.player.id)
+				return;
+
+			var player = game.level.remotePlayers[id];
+			player.x = data.x;
+			player.y = data.y;
+			player.xd = data.xd;
+			player.yd = data.yd;
+		});
+
+		socket.on("leave", function(data)
+		{
+			var remotePlayers = game.level.remotePlayers;
+			if(remotePlayers[data])
+				delete remotePlayers[data];
+		});
+	});
 }
 
 window.onload = preLoad;

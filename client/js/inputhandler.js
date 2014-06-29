@@ -60,7 +60,6 @@ function onKeyDown(e)
     var keyCode = (e.keyCode) ? e.keyCode : e.which;
 
     keys[keyCode] = true;
-    console.log(keyCode);
 }
 
 /**
