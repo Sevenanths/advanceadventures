@@ -22,8 +22,9 @@ var Game = Class.create({
 		this.canvas = canvas;
 		this.context = context;
 
-		this.level = new Level();
+		this.level = new Level(200, 200);
 		this.player = new Player(this.level);
+		this.level.setPlayer(this.player);
 	},
 
 	tick: function()
@@ -34,8 +35,8 @@ var Game = Class.create({
 
 	draw: function()
 	{
-		this.level.draw(this.context);
-		this.player.draw(this.context);
+		this.level.draw(this.context, this.level.camX, this.level.camY);
+		this.player.draw(this.context, this.level.camX, this.level.camY);
 	}
 });
 

@@ -27,12 +27,12 @@ var Player = Class.create({
 
 	tick: function()
 	{
-		this.x = (Math.random() * 800) | 0;
-		this.y = (Math.random() * 600) | 0;
+		this.x++;
+		this.y = 50 + Math.sin(this.x / 100) * 50;
 	},
 
-	draw: function(target)
+	draw: function(target, offX, offY)
 	{
-		target.drawImage(getAsset("player"), this.x, this.y);
+		target.drawImage(getAsset("player"), (offX + this.x) | 0, (offY + this.y) | 0);
 	}
 });

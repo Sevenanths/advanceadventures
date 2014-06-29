@@ -34,6 +34,7 @@ function loadAssets(callback)
 {
     assetCallback = callback;
     addAsset(ASSET_TYPE_IMAGE, "player", "asset/img/player.png");
+    addAsset(ASSET_TYPE_IMAGE, "test", "asset/img/test.png");
 }
 
 /**
