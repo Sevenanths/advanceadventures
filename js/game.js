@@ -28,7 +28,8 @@ var Game = Class.create({
 
 	tick: function()
 	{
-		console.log("tick");
+		this.level.tick();
+		this.player.tick();
 	},
 
 	draw: function()
@@ -56,6 +57,14 @@ function gameLoop()
 }
 
 /**
+ * This method is called before initializing the game
+**/
+function preLoad()
+{
+	loadAssets(init);
+}
+
+/**
  * This method is called when the game should be initialized
 **/
 function init()
@@ -69,4 +78,4 @@ function init()
 	gameLoop();
 }
 
-window.onload = init;
+window.onload = preLoad;

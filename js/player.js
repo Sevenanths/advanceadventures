@@ -20,10 +20,19 @@ var Player = Class.create({
 	initialize: function(level)
 	{
 		this.currentLevel = level;
+
+		this.x = 0;
+		this.y = 0;
+	},
+
+	tick: function()
+	{
+		this.x = (Math.random() * 800) | 0;
+		this.y = (Math.random() * 600) | 0;
 	},
 
 	draw: function(target)
 	{
-
+		target.drawImage(getAsset("player"), this.x, this.y);
 	}
 });

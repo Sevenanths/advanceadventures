@@ -22,6 +22,11 @@ var Level = Class.create({
 
 	},
 
+	tick: function()
+	{
+
+	},
+
 	draw: function(target)
 	{
 		// Clear screen
