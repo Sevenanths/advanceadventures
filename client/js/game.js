@@ -63,6 +63,7 @@ function gameLoop()
 function preLoad()
 {
 	loadAssets(init);
+	registerhandler();
 }
 
 /**
