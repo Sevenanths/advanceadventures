@@ -112,7 +112,7 @@ function init()
 			var x = data.x;
 			var y = data.y;
 
-			game.level.remotePlayers[id] = new RemotePlayer(id, name, x, y);
+			game.level.remotePlayers[id] = new RemotePlayer(game.level, id, name, x, y);
 		});
 
 		socket.on("move", function(data)

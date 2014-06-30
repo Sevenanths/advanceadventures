@@ -94,12 +94,14 @@ var Player = Class.create({
 });
 
 var RemotePlayer = Class.create({
-	initialize: function(level)
+	initialize: function(level, id, name, x, y)
 	{
 		this.currentLevel = level;
 
-		this.x = 0;
-		this.y = 0;
+		this.id = id;
+		this.name = name;
+		this.x = x;
+		this.y = y;
 		this.xd = 0;
 		this.yd = 0;
 		this.onGround = false;
