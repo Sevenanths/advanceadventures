@@ -1,15 +1,36 @@
 var io = require("socket.io")();
-io.on("connection", onConnect);
-io.listen(3000);
+	io.on("connection", onConnect);
+	io.listen(3000);
+var readline = require("readline");
+var rl = readline.createInterface(process.stdin, process.stdout);
 
 /**
  * Some variables
 **/
+var lastId = 0;
 var players =
 {
 	"level1": {}
 };
-var lastId = 0;
+var onlinePlayers =
+{
+	"level1": 0
+};
+
+/**
+ * This method sends a message to a room
+ * @param room the room name
+ * @param name the message name
+ * @param messageData the data in the message
+**/
+function broadcastInRoom(room, name, messageData)
+{
+	for(var i = 0, a = players[socket.room], l = a.length; i < l; i++)
+	{
+		var player = a[i];
+		player.emit(name, messageData);
+	}
+}
 
 /**
  * This method is called when a user connects
@@ -27,6 +48,7 @@ function onConnect(socket)
 
 	// Save socket
 	players[socket.room][lastId++] = socket;
+	onlinePlayers[socket.room]++;
 
 	// Sync players
 	for(var i = 0, a = players[socket.room], l = a.length; i < l; i++)
@@ -43,7 +65,9 @@ function onConnect(socket)
 	}
 
 
-	// Handlers
+	/**
+	 * Handlers
+	**/
 	socket.on("move", function(data)
 	{
 		if(isNaN(data.x) || isNaN(data.y) || isNaN(data.xd) || isNaN(data.yd))
@@ -54,23 +78,61 @@ function onConnect(socket)
 		socket.xd = data.xd;
 		socket.yd = data.yd;
 
-		for(var i = 0, a = players[socket.room], l = a.length; i < l; i++)
-		{
-			var player = a[i];
-			if(player.id != socket.id)
-				player.emit("move", { id: socket.id, x: socket.x, y: socket.y, xd: socket.xd, yd: socket.yd });
-		}
+		broadcastInRoom(socket.room, "move", { id: socket.id, x: socket.x, y: socket.y, xd: socket.xd, yd: socket.yd });
 	});
 
 	socket.on("disconnect", function()
 	{
-		for(var i = 0, a = players[socket.room], l = a.length; i < l; i++)
-		{
-			var player = a[i];
-			if(player.id != socket.id)
-				player.emit("leave", socket.id);
-		}
-
 		delete players[socket.room][socket.id];
+		broadcastInRoom(socket.room, "leave", socket.id);
+		onlinePlayers[socket.room]--;
 	});
-}
+};
+
+/**
+ * The CLI
+**/
+rl.setPrompt("> ");
+rl.prompt();
+
+/**
+ * Handlers
+**/
+rl.on("line", function(line)
+{
+	var text = line.trim();
+	
+	switch(text)
+	{
+		case "stop":
+			console.log("Stopping server...");
+			process.exit(0);
+
+			break;
+
+		case "online":
+			var total = 0;
+			for(var roomName in onlinePlayers)
+			{
+				console.log("ROOM:\t" + roomName + " - " + onlinePlayers[roomName]);
+				total += onlinePlayers[roomName];
+			}
+			console.log("That's a total of " + total + " players online.");
+
+			break;
+
+		case "help":
+			console.log("Available commands:");
+			console.log("  help\t\tDisplay a list of commands");
+			console;log("  stop\t\tStops the server");
+			console.log("  online\t\tShows the online players");
+
+			break;
+
+		default:
+			console.log("Unknown command, type \"help\" for a list of commands");
+			break;
+	}
+
+	rl.prompt();
+});
