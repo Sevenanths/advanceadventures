@@ -141,8 +141,8 @@ rl.on("line", function(line)
 
 		case "help":
 			console.log("Available commands:");
-			console.log("  help\t\tDisplay a list of commands");
-			console;log("  stop\t\tStops the server");
+			console.log("  help\t\t\tDisplay a list of commands");
+			console.log("  stop\t\t\tStops the server");
 			console.log("  online\t\tShows the online players");
 
 			break;

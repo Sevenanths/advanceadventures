@@ -35,13 +35,23 @@ var Level = Class.create({
 
 			for(var x = 0; x < width; x++)
 			{
-				if(y == 15)
+				this.map[y][x] = 0;
+				if(y == 15 || y == 0 || x == 0 || x == 25)
 					this.map[y][x] = 1;
-				else
-					this.map[y][x] = 0;
-
-				if(y > 15)
+				else if(y > 15)
 					this.map[y][x] = (Math.random() > 0.9) ? 1 : 0;
+
+				if(x == 6 && y == 14)
+					this.map[y][x] = 2;
+
+				if(x == 9 && y == 14)
+					this.map[y][x] = 3;
+
+				if(x == 12 && y == 14)
+					this.map[y][x] = 4;
+
+				if(x == 14 && y == 14)
+					this.map[y][x] = 5;
 			}
 		}
 	},
@@ -59,21 +69,23 @@ var Level = Class.create({
 
 	getAABBs: function(aabb)
 	{
-		list = [];
+		var list = [];
 
-		var x0 = aabb.x0 >> 4;
-		var y0 = aabb.y0 >> 4;
+		var x0 = (aabb.x0 >> 4) - 1;
+		var y0 = (aabb.y0 >> 4) - 1;
 		var x1 = (aabb.x1 >> 4) + 1;
 		var y1 = (aabb.y1 >> 4) + 1;
 
 		for(var x = x0; x <= x1; x++)
 		{
+			var xx = x << 4;
 			for(var y = y0; y <= y1; y++)
 			{
-				if(this.map[y][x] == 0)
+				if(!tiles[this.map[y][x]].solid)
 					continue;
 
-				list.push(new AABB(x << 4, y << 4, (x << 4) + 16, (y << 4) + 16));
+				var yy = y << 4;
+				list.push(new AABB(xx, yy, xx + 16, yy + 16));
 			}
 		}
 
@@ -106,16 +118,13 @@ var Level = Class.create({
 		for(var yy = startY; yy <= endY; yy++)
 		{
 			var my = this.map[yy];
-			if(!my)
-				continue;
-
 			for(var xx = startX; xx <= endX; xx++)
 			{
 				var tile = my[xx];
 				if(tile == 0)
 					continue;
 
-				target.drawImage(tileImage, offX + (xx << 4), offY + (yy << 4));
+				target.drawImage(tileImage, tile << 4, 0, 16, 16, offX + (xx << 4), offY + (yy << 4), 16, 16);
 			}
 		}
 	}

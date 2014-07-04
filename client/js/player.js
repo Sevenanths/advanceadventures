@@ -21,11 +21,15 @@ var Player = Class.create({
 	{
 		this.currentLevel = level;
 
-		this.x = 0;
-		this.y = 0;
+		this.x = 16;
+		this.y = 16;
 		this.xd = 0;
 		this.yd = 0;
+		this.gravX = 0;
+		this.gravY = 1;
 		this.onGround = false;
+		this.rotation = 0;
+		this.rotationDestination = 0;
 		this.aabb = new AABB(this.x, this.y, this.x + 16, this.y + 16);
 	},
 
@@ -40,16 +44,45 @@ var Player = Class.create({
 		if(isKeyDown(KEY_SPACE) && this.onGround)
 			this.yd = -26;
 
+		// Check tile
+		var orgGravX = this.gravX;
+		var orgGravY = this.gravY;
+
+		var inside = this.currentLevel.map[this.y >> 4][this.x >> 4];
+		var tile   = tiles[inside];
+		if(inside != 0 && !tile.solid)
+		{
+			this.gravX = tile.xGrav;
+			this.gravY = tile.yGrav;
+
+			if(this.gravX == -1)
+				this.rotationDestination = 90;
+			else if(this.gravX == 1)
+				this.rotationDestination = -90;
+			else if(this.gravY == -1)
+				this.rotationDestination = -180;
+			else if(this.gravY == 1)
+				this.rotationDestination = 180;
+			else
+				this.rotationDestination = 0;
+		}
+
+		// Rotate to destination
+		if(this.rotation < this.rotationDestination)
+			this.rotation += 10;
+		else if(this.rotation > this.rotationDestination)
+			this.rotation -= 10;
+
 		// Apply gravity
 		if(!this.onGround)
-			this.yd += 4;
+		{
+			this.xd += 4 * this.gravX;
+			this.yd += 4 * this.gravY;
+		}
 
 		// Friction
 		this.xd *= 0.8;
 		this.yd *= 0.8;
-
-		//if(Math.abs(this.xd) < 0.01) this.xd = 0;
-		//if(Math.abs(this.yd) < 0.01) this.yd = 0;
 
 		var xOrg = this.xd;
 		var yOrg = this.yd;
@@ -89,7 +122,8 @@ var Player = Class.create({
 
 	draw: function(target, offX, offY)
 	{
-		target.drawImage(getAsset("player"), (offX + this.x) | 0, (offY + this.y) | 0);
+		var image = getAsset("player");
+		drawRotatedImage(image, target, (offX + this.x) | 0, (offY + this.y) | 0, this.rotation);
 	}
 });
 
@@ -134,6 +168,6 @@ var RemotePlayer = Class.create({
 
 	draw: function(target, offX, offY)
 	{
-		target.drawImage(getAsset("player"), (offX + this.x) | 0, (offY + this.y) | 0);
+		// TODO: make entity system to prevent double code for rotation
 	}
 });
