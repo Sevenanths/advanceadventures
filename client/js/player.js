@@ -33,23 +33,23 @@ var Player = Class.create({
 	{
 		// Input
 		if(isKeyDown(KEY_A))
-			this.xd = -2;
+			this.xd = -5;
 		else if(isKeyDown(KEY_D))
-			this.xd = 2;
+			this.xd = 5;
 
 		if(isKeyDown(KEY_SPACE) && this.onGround)
-			this.yd = -9;
+			this.yd = -26;
 
 		// Apply gravity
 		if(!this.onGround)
-			this.yd += 1.5;
+			this.yd += 4;
 
 		// Friction
 		this.xd *= 0.8;
 		this.yd *= 0.8;
 
-		if(Math.abs(this.xd) < 0.01) this.xd = 0;
-		if(Math.abs(this.yd) < 0.01) this.yd = 0;
+		//if(Math.abs(this.xd) < 0.01) this.xd = 0;
+		//if(Math.abs(this.yd) < 0.01) this.yd = 0;
 
 		var xOrg = this.xd;
 		var yOrg = this.yd;

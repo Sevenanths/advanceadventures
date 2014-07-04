@@ -82,8 +82,11 @@ var Level = Class.create({
 
 	draw: function(target, offX, offY)
 	{
+		var width = target.canvas.width;
+		var height = target.canvas.height;
+
 		// Clear screen
-		target.clearRect(0, 0, target.canvas.width, target.canvas.height);
+		target.clearRect(0, 0, width, height);
 
 		// Draw level
 		offX |= 0;
@@ -91,15 +94,15 @@ var Level = Class.create({
 
 		var startX = -(offX >> 4) - 1;
 		var startY = -(offY >> 4) - 1;
-		var endX = startX + (800 >> 4) + 1;
-		var endY = startY + (600 >> 4) + 1;
+		var endX = startX + (width >> 4) + 1;
+		var endY = startY + (height >> 4) + 1;
 
 		if(startX < 0)			startX = 0;
 		if(startY < 0)			startY = 0;
 		if(endX >= this.width)	endX = this.width - 1;
 		if(endY >= this.height)	endY = this.height - 1;
 
-		var tileImage = getAsset("test");
+		var tileImage = getAsset("tiles");
 		for(var yy = startY; yy <= endY; yy++)
 		{
 			var my = this.map[yy];

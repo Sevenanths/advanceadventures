@@ -28,11 +28,11 @@ var rl = readline.createInterface(process.stdin, process.stdout);
 var lastId = 0;
 var players =
 {
-	"level1": {}
+	"world1": {}
 };
 var onlinePlayers =
 {
-	"level1": 0
+	"world1": 0
 };
 
 /**
@@ -57,7 +57,7 @@ function onConnect(socket)
 {
 	socket.id = lastId;
 	socket.name = "user";
-	socket.room = "level1";
+	socket.room = "world1";
 	socket.x = 0;
 	socket.y = 0;
 	socket.xd = 0;
