@@ -43,7 +43,7 @@ var onlinePlayers =
 **/
 function broadcastInRoom(room, name, messageData)
 {
-	for(var i = 0, a = players[socket.room], l = a.length; i < l; i++)
+	for(var i = 0, a = players[room], l = a.length; i < l; i++)
 	{
 		var player = a[i];
 		player.emit(name, messageData);

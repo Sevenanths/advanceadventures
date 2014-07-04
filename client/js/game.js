@@ -51,6 +51,8 @@ var Game = Class.create({
 /**
  * Some variables
 **/
+var domCanvas, domContext;
+var canvas, context;
 var game;
 var socket;
 
@@ -59,8 +61,13 @@ var socket;
 **/
 function gameLoop()
 {
+	// Tick & draw
 	game.tick();
 	game.draw();
+
+	// Copy off-DOM canvas data to DOM canvas
+	domContext.clearRect(0, 0, domCanvas.width, domCanvas.height);
+	domContext.drawImage(canvas, 0, 0);
 
 	// Run the game with 30FPS
 	setTimeout(gameLoop, 1000 / 30);
@@ -80,8 +87,14 @@ function preLoad()
 **/
 function init()
 {
-	var canvas = document.getElementById("game");
-	var context = canvas.getContext("2d");
+	canvas = document.createElement("canvas");
+	domCanvas = document.getElementById("game");
+
+	canvas.width = domCanvas.width;
+	canvas.height = domCanvas.height;
+
+	domContext = domCanvas.getContext("2d");
+	context = canvas.getContext("2d");
 
 	socket = io("ws://localhost:3000");
 	socket.on("connect", function()
