@@ -16,6 +16,8 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+"use strict";
+
 var Level = Class.create({
 	initialize: function(width, height)
 	{
@@ -52,6 +54,9 @@ var Level = Class.create({
 
 				if(x == 14 && y == 14)
 					this.map[y][x] = 5;
+
+				if(x == 3 && y == 14)
+					this.map[y][x] = 6;
 			}
 		}
 	},
@@ -73,6 +78,14 @@ var Level = Class.create({
 			return 0;
 
 		return this.map[y][x];
+	},
+
+	setTile: function(x, y, tile)
+	{
+		if(x < 0 || y < 0 || x >= this.width || y >= this.height)
+			return 0;
+
+		this.map[y][x] = tile;
 	},
 
 	getAABBs: function(aabb)

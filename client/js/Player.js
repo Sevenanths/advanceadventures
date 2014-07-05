@@ -16,6 +16,8 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+"use strict";
+
 var Player = Class.create(Entity, {
 	initialize: function($super, level)
 	{

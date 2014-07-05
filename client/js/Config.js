@@ -16,15 +16,19 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+"use strict";
+
 var Config =
 {
     PROTOCOL_VERSION: 1,
+
     NET_HANDSHAKE:    "handshake",
     NET_MOVE:         "move",
     NET_JOIN:         "join",
     NET_JOINED:       "joined",
     NET_CHAT:         "chat",
     NET_LEAVE:        "leave",
+    
     SERVER_IP:        "127.0.0.1",
     SERVER_PORT:      "3000"
 };

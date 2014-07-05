@@ -16,6 +16,8 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+"use strict";
+
 var Game = Class.create({
 	initialize: function(canvas, context)
 	{

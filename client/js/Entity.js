@@ -16,6 +16,8 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+"use strict";
+
 var Entity = Class.create({
     initialize: function(level)
     {
@@ -46,25 +48,28 @@ var Entity = Class.create({
         var orgGravX = this.xGrav;
         var orgGravY = this.yGrav;
 
-        var inside = this.currentLevel.getTile(this.x >> 4, this.y >> 4);
-        var tile   = tiles[inside];
-        if(inside != 0 && !tile.solid)
+        var inside = this.currentLevel.getTile((this.x + 8) >> 4, (this.y + 8) >> 4);
+        if(inside > 0)
         {
-            this.xGrav = tile.xGrav;
-            this.yGrav = tile.yGrav;
+            var tile = tiles[inside];
+            if(!tile.solid)
+            {
+                if(tile.xGrav != 0)     this.xGrav = tile.xGrav;
+                if(tile.yGrav != 0)     this.yGrav = tile.yGrav;
 
-            if(this.xGrav == -1)        this.rotationDestination = 90;
-            else if(this.xGrav == 1)    this.rotationDestination = -90;
-            else if(this.yGrav == -1)   this.rotationDestination = -180;
-            else if(this.yGrav == 1)    this.rotationDestination = 180;
-            else                        this.rotationDestination = 0;
+                this.xd += tile.xSpd;
+                this.yd += tile.ySpd;
+
+                var xRot = -90 * this.xGrav;
+                var yRot = 180 * this.yGrav - 180;
+                
+                this.rotationDestination = xRot + yRot;
+            }
         }
 
         // Rotate to destination
-        if(this.rotation < this.rotationDestination)
-            this.rotation += 10;
-        else if(this.rotation > this.rotationDestination)
-            this.rotation -= 10;
+        if(this.rotation < this.rotationDestination)        this.rotation += 10;
+        else if(this.rotation > this.rotationDestination)   this.rotation -= 10;
 
         // Apply gravity
         if(!this.onGround)
@@ -99,13 +104,13 @@ var Entity = Class.create({
         if(this.yd != yOrg) this.yd = 0;
 
         // Outside the level?
-        var maxX = this.currentLevel.width << 4;
-        var maxY = this.currentLevel.height << 4;
+        var maxX = (this.currentLevel.width << 4) - this.width;
+        var maxY = (this.currentLevel.height << 4) - this.height;
 
         if(this.x < 0)      this.x = 0;
         if(this.y < 0)      this.y = 0;
-        if(this.x > maxX)   this.x = maxX;
-        if(this.y > maxY)   this.y = maxY;
+        if(this.x >= maxX)  this.x = maxX;
+        if(this.y >= maxY)  this.y = maxY;
     },
 
     draw: function(image, target, offX, offY)

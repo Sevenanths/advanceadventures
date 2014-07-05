@@ -16,53 +16,91 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+"use strict";
+
 var tiles =
 {
     // Air
     0:
     {
         solid: false,
+
         xGrav: 0,
-        yGrav: 1
+        yGrav: 1,
+
+        xSpd:  0,
+        ySpd:  0
     },
 
     // Solid brick
     1:
     {
         solid: true,
+
         xGrav: 0,
-        yGrav: 0
+        yGrav: 0,
+
+        xSpd:  0,
+        ySpd:  0
     },
 
     // Up
     2:
     {
         solid: false,
+
         xGrav: 0,
-        yGrav: -1
+        yGrav: -1,
+
+        xSpd:  0,
+        ySpd:  0
     },
 
     // Down
     3:
     {
         solid: false,
+
         xGrav: 0,
-        yGrav: 1
+        yGrav: 1,
+
+        xSpd:  0,
+        ySpd:  0
     },
 
     // Left
     4:
     {
         solid: false,
+
         xGrav: -1,
-        yGrav: 0
+        yGrav: 0,
+
+        xSpd:  0,
+        ySpd:  0
     },
 
     // Right
     5:
     {
         solid: false,
+
         xGrav: 1,
-        yGrav: 0
+        yGrav: 0,
+
+        xSpd:  0,
+        ySpd:  0
+    },
+
+    // Trampoline
+    6:
+    {
+        solid: false,
+        
+        xGrav: 0,
+        yGrav: 0,
+
+        xSpd:  0,
+        ySpd:  -50,
     }
 }

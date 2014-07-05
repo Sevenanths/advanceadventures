@@ -16,6 +16,8 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+"use strict";
+
 var AABB = Class.create({
     initialize: function(x0, y0, x1, y1)
     {
