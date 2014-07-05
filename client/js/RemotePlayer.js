@@ -26,7 +26,6 @@ var RemotePlayer = Class.create(Entity, {
 		this.x = x;
 		this.y = y;
 		this.aabb.moveTo(x, y);
-		console.log(x + " " + y);
 	},
 
 	draw: function($super, target, offX, offY)

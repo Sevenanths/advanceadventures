@@ -22,18 +22,26 @@ var io = require("socket.io")();
 var readline = require("readline");
 var rl = readline.createInterface(process.stdin, process.stdout);
 
+const PROTOCOL_VERSION = 1;
+
 /**
  * Some variables
 **/
 var lastId = 0;
-var players =
+var rooms =
+[
+	"world1"
+];
+/*var players =
 {
 	"world1": {}
 };
 var onlinePlayers =
 {
 	"world1": 0
-};
+};*/
+var players = {};
+var onlinePlayers = {};
 
 /**
  * This method sends a message to a room
@@ -52,68 +60,96 @@ function broadcastInRoom(room, name, messageData)
 }
 
 /**
+ * This method is used to initialize the server data
+**/
+function init()
+{
+	console.log("");
+	for(var i = 0, l = rooms.length; i < l; i++)
+	{
+		var roomName = rooms[i];
+
+		players[roomName] = {};
+		onlinePlayers[roomName] = 0;
+		console.log(" - ROOM " + roomName + " is ready");
+	}
+
+	console.log("---");
+	console.log("All rooms are ready");
+	console.log("");
+}
+
+/**
  * This method is called when a user connects
+ * @param socket the connecting socket
 **/
 function onConnect(socket)
 {
-	socket.id = lastId;
-	socket.name = "user";
-	socket.room = "world1";
-	socket.x = 0;
-	socket.y = 0;
-	socket.xd = 0;
-	socket.yd = 0;
-	socket.emit("joined", { id: socket.id, x: 0, y: 0 });
-
-	// Save socket
-	players[socket.room][lastId++] = socket;
-	onlinePlayers[socket.room]++;
-
-	// Sync players
-	var array = players[socket.room];
-	for(var key in array)
+	socket.on("handshake", function(protocol_version)
 	{
-		var player = array[key];
+		if(protocol_version == PROTOCOL_VERSION)
+		{
+			socket.id = lastId;
+			socket.name = "user";
+			socket.room = "world1";
+			socket.x = 0;
+			socket.y = 0;
+			socket.xd = 0;
+			socket.yd = 0;
+			socket.emit("joined", { id: socket.id, x: 0, y: 0 });
 
-		// Send other players to newly joined player
-		if(socket.id != player.id)
-			socket.emit("join", { id: player.id, name: player.name, x: player.x, y: player.y });
+			// Save socket
+			players[socket.room][lastId++] = socket;
+			onlinePlayers[socket.room]++;
 
-		// Send player to others
-		if(socket.id != player.id)
-			player.emit("join", { id: socket.id, name: socket.name, x: socket.x, y: socket.y });
-	}
+			// Sync players
+			var array = players[socket.room];
+			for(var key in array)
+			{
+				var player = array[key];
+
+				// Send other players to newly joined player
+				if(socket.id != player.id)
+					socket.emit("join", { id: player.id, name: player.name, x: player.x, y: player.y });
+
+				// Send player to others
+				if(socket.id != player.id)
+					player.emit("join", { id: socket.id, name: socket.name, x: socket.x, y: socket.y });
+			}
 
 
-	/**
-	 * Handlers
-	**/
-	socket.on("move", function(data)
-	{
-		if(isNaN(data.x) || isNaN(data.y) || isNaN(data.xd) || isNaN(data.yd))
-			return;
+			/**
+			 * Handlers
+			**/
+			socket.on("move", function(data)
+			{
+				if(isNaN(data.x) || isNaN(data.y) || isNaN(data.xd) || isNaN(data.yd))
+				{
+					socket.disconnect();
+					return;
+				}
 
-		socket.x = data.x;
-		socket.y = data.y;
-		socket.xd = data.xd;
-		socket.yd = data.yd;
+				socket.x = data.x;
+				socket.y = data.y;
+				socket.xd = data.xd;
+				socket.yd = data.yd;
 
-		broadcastInRoom(socket.room, "move", { id: socket.id, x: socket.x, y: socket.y, xd: socket.xd, yd: socket.yd });
-	});
+				broadcastInRoom(socket.room, "move", { id: socket.id, x: socket.x, y: socket.y, xd: socket.xd, yd: socket.yd });
+			});
 
-	socket.on("disconnect", function()
-	{
-		delete players[socket.room][socket.id];
-		broadcastInRoom(socket.room, "leave", socket.id);
-		onlinePlayers[socket.room]--;
+			socket.on("disconnect", function()
+			{
+				delete players[socket.room][socket.id];
+				broadcastInRoom(socket.room, "leave", socket.id);
+				onlinePlayers[socket.room]--;
+			});
+		}
+		else
+		{
+			socket.disconnect();
+		}
 	});
 };
-
-/**
- * The CLI
-**/
-rl.setPrompt("> ");
-rl.prompt();
 
 /**
  * Handlers
@@ -156,3 +192,14 @@ rl.on("line", function(line)
 
 	rl.prompt();
 });
+
+/**
+ * Initialize server
+**/
+init();
+
+/**
+ * The CLI
+**/
+rl.setPrompt("> ");
+rl.prompt();

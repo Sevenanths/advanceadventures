@@ -99,6 +99,9 @@ function init()
 	socket = io("ws://" + Config.SERVER_IP + ":" + Config.SERVER_PORT);
 	socket.on("connect", function()
 	{
+		// Handshake
+		socket.emit(Config.NET_HANDSHAKE, Config.PROTOCOL_VERSION);
+
 		// Handlers
 		socket.on(Config.NET_JOINED, function(data)
 		{

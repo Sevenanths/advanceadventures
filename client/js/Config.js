@@ -19,6 +19,7 @@
 var Config =
 {
     PROTOCOL_VERSION: 1,
+    NET_HANDSHAKE:    "handshake",
     NET_MOVE:         "move",
     NET_JOIN:         "join",
     NET_JOINED:       "joined",
