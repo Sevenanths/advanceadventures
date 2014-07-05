@@ -67,6 +67,14 @@ var Level = Class.create({
 		this.camY -= ((this.camY + this.player.y - 300) * this.cameraDelay);
 	},
 
+	getTile: function(x, y)
+	{
+		if(x < 0 || y < 0 || x >= this.width || y >= this.height)
+			return 0;
+
+		return this.map[y][x];
+	},
+
 	getAABBs: function(aabb)
 	{
 		var list = [];
@@ -81,7 +89,7 @@ var Level = Class.create({
 			var xx = x << 4;
 			for(var y = y0; y <= y1; y++)
 			{
-				if(!tiles[this.map[y][x]].solid)
+				if(!tiles[this.getTile(x, y)].solid)
 					continue;
 
 				var yy = y << 4;

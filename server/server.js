@@ -32,14 +32,6 @@ var rooms =
 [
 	"world1"
 ];
-/*var players =
-{
-	"world1": {}
-};
-var onlinePlayers =
-{
-	"world1": 0
-};*/
 var players = {};
 var onlinePlayers = {};
 
@@ -92,11 +84,11 @@ function onConnect(socket)
 			socket.id = lastId;
 			socket.name = "user";
 			socket.room = "world1";
-			socket.x = 0;
-			socket.y = 0;
+			socket.x = 16;
+			socket.y = 16;
 			socket.xd = 0;
 			socket.yd = 0;
-			socket.emit("joined", { id: socket.id, x: 0, y: 0 });
+			socket.emit("joined", { id: socket.id, x: socket.x, y: socket.y });
 
 			// Save socket
 			players[socket.room][lastId++] = socket;

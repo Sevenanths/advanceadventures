@@ -109,10 +109,8 @@ function init()
 			game = new Game(canvas, context);
 
 			var player = game.player;
-
 			player.id = data.id;
-			player.x = data.x;
-			player.y = data.y
+			player.moveTo(data.x, data.y);
 
 			// Run game loop
 			gameLoop();
@@ -120,7 +118,6 @@ function init()
 
 		socket.on(Config.NET_JOIN, function(data)
 		{
-			console.log(data);
 			var id = data.id;
 			if(id == game.player.id)
 				return;

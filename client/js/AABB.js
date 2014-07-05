@@ -35,8 +35,8 @@ var AABB = Class.create({
 
     moveTo: function(x, y)
     {
-        var xx = this.x - this.x0;
-        var yy = this.y - this.y0;
+        var xx = x - this.x0;
+        var yy = y - this.y0;
         this.move(xx, yy);
     },
 

@@ -21,8 +21,8 @@ var Entity = Class.create({
     {
         this.currentLevel = level;
 
-        this.x = 16;
-        this.y = 16;
+        this.x = 0;
+        this.y = 0;
         this.xd = 0;
         this.yd = 0;
         this.xGrav = 0;
@@ -33,13 +33,20 @@ var Entity = Class.create({
         this.aabb = new AABB(this.x, this.y, this.x + 16, this.y + 16);
     },
 
+    moveTo: function(x, y)
+    {
+        this.x = x;
+        this.y = y;
+        this.aabb.moveTo(x, y);
+    },
+
     tick: function()
     {
         // Check tile
         var orgGravX = this.xGrav;
         var orgGravY = this.yGrav;
 
-        var inside = this.currentLevel.map[this.y >> 4][this.x >> 4];
+        var inside = this.currentLevel.getTile(this.x >> 4, this.y >> 4);
         var tile   = tiles[inside];
         if(inside != 0 && !tile.solid)
         {
