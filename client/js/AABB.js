@@ -33,6 +33,13 @@ var AABB = Class.create({
         this.y1 += y;
     },
 
+    moveTo: function(x, y)
+    {
+        var xx = this.x - this.x0;
+        var yy = this.y - this.y0;
+        this.move(xx, yy);
+    },
+
     xCollide: function(other, x)
     {
         if(other.y1 <= this.y0 || other.y0 >= this.y1)

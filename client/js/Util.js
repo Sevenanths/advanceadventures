@@ -29,7 +29,7 @@ var RAD_TO_DEG = 180 / Math.PI;
  * @param x x coordinate
  * @param y y coordinate
  * @param angle angle in degrees
-*/
+**/
 function drawRotatedImage(img, context, x, y, angle)
 {
     var w = img.width;
