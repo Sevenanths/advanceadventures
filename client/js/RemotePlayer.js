@@ -26,10 +26,12 @@ var RemotePlayer = Class.create(Entity, {
 		this.x = x;
 		this.y = y;
 		this.aabb.moveTo(x, y);
+		console.log(x + " " + y);
 	},
 
-	draw: function(target, offX, offY)
+	draw: function($super, target, offX, offY)
 	{
-		// TODO: fix this with working rotation
+		var image = getAsset("player");
+		$super(image, target, offX, offY);
 	}
 });

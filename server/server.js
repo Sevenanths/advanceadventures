@@ -43,9 +43,10 @@ var onlinePlayers =
 **/
 function broadcastInRoom(room, name, messageData)
 {
-	for(var i = 0, a = players[room], l = a.length; i < l; i++)
+	var array = players[room];
+	for(var key in array)
 	{
-		var player = a[i];
+		var player = array[key];
 		player.emit(name, messageData);
 	}
 }
@@ -69,9 +70,10 @@ function onConnect(socket)
 	onlinePlayers[socket.room]++;
 
 	// Sync players
-	for(var i = 0, a = players[socket.room], l = a.length; i < l; i++)
+	var array = players[socket.room];
+	for(var key in array)
 	{
-		var player = a[i];
+		var player = array[key];
 
 		// Send other players to newly joined player
 		if(socket.id != player.id)

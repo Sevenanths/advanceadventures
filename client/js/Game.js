@@ -117,6 +117,7 @@ function init()
 
 		socket.on(Config.NET_JOIN, function(data)
 		{
+			console.log(data);
 			var id = data.id;
 			if(id == game.player.id)
 				return;
