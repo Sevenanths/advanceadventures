@@ -50,7 +50,25 @@ function broadcastInRoom(room, name, messageData)
 }
 
 /**
- * This method is used to initialize the server data
+ * This method sends a message to a room
+ * @param exclusionId the id to be excluded
+ * @param room the room name
+ * @param name the message name
+ * @param messageData the data in the message
+**/
+function broadcastInRoomEx(exclusionId, room, name, messageData)
+{
+	var array = players[room];
+	for(var key in array)
+	{
+		var player = array[key];
+		if(player.id != exclusionId)
+			player.emit(name, messageData);
+	}
+}
+
+/**
+ * This method is used to initialize the rooms
 **/
 function init()
 {
@@ -125,7 +143,7 @@ function onConnect(socket)
 				socket.xd = data.xd;
 				socket.yd = data.yd;
 
-				broadcastInRoom(socket.room, Config.NET_MOVE, { id: socket.id, x: socket.x, y: socket.y, xd: socket.xd, yd: socket.yd });
+				broadcastInRoomEx(socket.id, socket.room, Config.NET_MOVE, { id: socket.id, x: socket.x, y: socket.y, xd: socket.xd, yd: socket.yd });
 			});
 
 			socket.on("disconnect", function()

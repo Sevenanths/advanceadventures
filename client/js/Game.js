@@ -121,9 +121,6 @@ function init()
 		socket.on(Config.NET_JOIN, function(data)
 		{
 			var id = data.id;
-			if(id == game.player.id)
-				return;
-
 			var name = data.name;
 			var x = data.x;
 			var y = data.y;
@@ -134,10 +131,8 @@ function init()
 		socket.on(Config.NET_MOVE, function(data)
 		{
 			var id = data.id;
-			if(id == game.player.id)
-				return;
-
 			var player = game.level.remotePlayers[id];
+			
 			player.x = data.x;
 			player.y = data.y;
 			player.xd = data.xd;
