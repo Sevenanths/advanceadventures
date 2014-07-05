@@ -16,22 +16,20 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-var io = require("socket.io")();
-	io.on("connection", onConnect);
-	io.listen(3000);
-var readline = require("readline");
-var rl = readline.createInterface(process.stdin, process.stdout);
+"use strict";
 
-const PROTOCOL_VERSION = 1;
+var Config = require("./Config.js");
+var io     = require("socket.io")();
+	  io.on("connection", onConnect);
+	  io.listen(Config.SERVER_PORT);
+
+var readline = require("readline");
+var rl       = readline.createInterface(process.stdin, process.stdout);
 
 /**
  * Some variables
 **/
 var lastId = 0;
-var rooms =
-[
-	"world1"
-];
 var players = {};
 var onlinePlayers = {};
 
@@ -57,16 +55,16 @@ function broadcastInRoom(room, name, messageData)
 function init()
 {
 	console.log("");
-	for(var i = 0, l = rooms.length; i < l; i++)
+	for(var i = 0, l = Config.ROOMS.length; i < l; i++)
 	{
-		var roomName = rooms[i];
+		var roomName = Config.ROOMS[i];
 
 		players[roomName] = {};
 		onlinePlayers[roomName] = 0;
-		console.log(" - ROOM " + roomName + " is ready");
+		console.log("ROOM " + roomName + " is ready");
 	}
 
-	console.log("---");
+	console.log("");
 	console.log("All rooms are ready");
 	console.log("");
 }
@@ -79,8 +77,9 @@ function onConnect(socket)
 {
 	socket.on("handshake", function(protocol_version)
 	{
-		if(protocol_version == PROTOCOL_VERSION)
+		if(protocol_version == Config.PROTOCOL_VERSION)
 		{
+			// Set data
 			socket.id = lastId;
 			socket.name = "user";
 			socket.room = "world1";
@@ -88,7 +87,7 @@ function onConnect(socket)
 			socket.y = 16;
 			socket.xd = 0;
 			socket.yd = 0;
-			socket.emit("joined", { id: socket.id, x: socket.x, y: socket.y });
+			socket.emit(Config.NET_JOINED, { id: socket.id, x: socket.x, y: socket.y });
 
 			// Save socket
 			players[socket.room][lastId++] = socket;
@@ -99,21 +98,21 @@ function onConnect(socket)
 			for(var key in array)
 			{
 				var player = array[key];
-
-				// Send other players to newly joined player
 				if(socket.id != player.id)
-					socket.emit("join", { id: player.id, name: player.name, x: player.x, y: player.y });
+				{
+					// Send other players to newly joined player
+					socket.emit(Config.NET_JOIN, { id: player.id, name: player.name, x: player.x, y: player.y });
 
-				// Send player to others
-				if(socket.id != player.id)
-					player.emit("join", { id: socket.id, name: socket.name, x: socket.x, y: socket.y });
+					// Send player to others
+					player.emit(Config.NET_JOIN, { id: socket.id, name: socket.name, x: socket.x, y: socket.y });
+				}
 			}
 
 
 			/**
 			 * Handlers
 			**/
-			socket.on("move", function(data)
+			socket.on(Config.NET_MOVE, function(data)
 			{
 				if(isNaN(data.x) || isNaN(data.y) || isNaN(data.xd) || isNaN(data.yd))
 				{
@@ -126,13 +125,13 @@ function onConnect(socket)
 				socket.xd = data.xd;
 				socket.yd = data.yd;
 
-				broadcastInRoom(socket.room, "move", { id: socket.id, x: socket.x, y: socket.y, xd: socket.xd, yd: socket.yd });
+				broadcastInRoom(socket.room, Config.NET_MOVE, { id: socket.id, x: socket.x, y: socket.y, xd: socket.xd, yd: socket.yd });
 			});
 
 			socket.on("disconnect", function()
 			{
 				delete players[socket.room][socket.id];
-				broadcastInRoom(socket.room, "leave", socket.id);
+				broadcastInRoom(socket.room, Config.NET_LEAVE, socket.id);
 				onlinePlayers[socket.room]--;
 			});
 		}
