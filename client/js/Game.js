@@ -70,7 +70,7 @@ function gameLoop()
 	domContext.drawImage(canvas, 0, 0);
 
 	// Run the game with 30FPS
-	setTimeout(gameLoop, 1000 / 30);
+	setTimeout(gameLoop, (1000 / 30) | 0);
 }
 
 /**
@@ -96,11 +96,11 @@ function init()
 	domContext = domCanvas.getContext("2d");
 	context = canvas.getContext("2d");
 
-	socket = io("ws://localhost:3000");
+	socket = io("ws://" + Config.SERVER_IP + ":" + Config.SERVER_PORT);
 	socket.on("connect", function()
 	{
 		// Handlers
-		socket.on("joined", function(data)
+		socket.on(Config.NET_JOINED, function(data)
 		{
 			// Create game instance
 			game = new Game(canvas, context);
@@ -115,7 +115,7 @@ function init()
 			gameLoop();
 		});
 
-		socket.on("join", function(data)
+		socket.on(Config.NET_JOIN, function(data)
 		{
 			var id = data.id;
 			if(id == game.player.id)
@@ -128,9 +128,8 @@ function init()
 			game.level.remotePlayers[id] = new RemotePlayer(game.level, id, name, x, y);
 		});
 
-		socket.on("move", function(data)
+		socket.on(Config.NET_MOVE, function(data)
 		{
-			console.log("move");
 			var id = data.id;
 			if(id == game.player.id)
 				return;
@@ -142,7 +141,7 @@ function init()
 			player.yd = data.yd;
 		});
 
-		socket.on("leave", function(data)
+		socket.on(Config.NET_LEAVE, function(data)
 		{
 			var remotePlayers = game.level.remotePlayers;
 			if(remotePlayers[data])

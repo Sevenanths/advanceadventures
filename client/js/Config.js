@@ -16,36 +16,14 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-var Player = Class.create(Entity, {
-	initialize: function($super, level)
-	{
-		$super(level);
-	},
-
-	tick: function($super)
-	{
-		// Input
-		if(isKeyDown(KEY_A))
-			this.xd = -5;
-		else if(isKeyDown(KEY_D))
-			this.xd = 5;
-
-		if(isKeyDown(KEY_SPACE) && this.onGround)
-			this.yd = -26 * this.yGrav;
-
-		// Call super
-		$super();
-
-		// Send data to server
-		if(this.xd != 0 || this.yd != 0)
-        {
-            socket.emit(Config.NET_MOVE, { xd: this.xd, yd: this.yd, x: this.x, y: this.y });
-        }
-	},
-
-	draw: function($super, target, offX, offY)
-	{
-		var image = getAsset("player");
-		$super(image, target, offX, offY);
-	}
-});
+var Config =
+{
+    PROTOCOL_VERSION: 1,
+    NET_MOVE:         "move",
+    NET_JOIN:         "join",
+    NET_JOINED:       "joined",
+    NET_CHAT:         "chat",
+    NET_LEAVE:        "leave",
+    SERVER_IP:        "127.0.0.1",
+    SERVER_PORT:      "3000"
+};
